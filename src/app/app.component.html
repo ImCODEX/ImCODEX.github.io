@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern Game</title>
+  <style>
+  </style>
+</head>
+<body>
+  <div class="starfield"></div>
+  <div class="container" [class.cracked]="crackedEffect" [class.hidden]="showEasterEgg">
+    <h1 class="title shake">{{ title }}</h1>
+    <label for="shapeCount">Number of shapes:</label>
+    <select id="shapeCount" [(ngModel)]="shapeCount">
+      <option *ngFor="let num of [3,4,5,6,7,8]" [value]="num">{{ num }}</option>
+    </select>
+    <button class="start-btn" (click)="startGame()">Start Game</button>
+    <div class="memorize-section" *ngIf="canSeePattern">
+      <p>Memorize the pattern! Time left: {{ timeLeft }}s</p>
+      <div class="pattern-row">
+        <div class="shape" *ngFor="let shape of shapes" [ngClass]="shape.type"></div>
+      </div>
+    </div>
+    <div class="drop-section" *ngIf="canPlaceShapes">
+      <h2>Place the shapes in the correct order</h2>
+      <div class="placeholders-row">
+        <div class="placeholder" *ngFor="let placeholder of placeholders; let i = index" (dragover)="allowDrop($event)" (drop)="drop($event, i)">
+          <div class="shape" *ngIf="placeholder" [ngClass]="placeholder.type"></div>
+        </div>
+      </div>
+      <h3>Drag from here:</h3>
+      <div class="pool-row">
+        <div class="shape" *ngFor="let shape of shapeLibrary; let idx = index" [ngClass]="shape" draggable="true" (dragstart)="dragStart($event, { type: shape, id: idx })"></div>
+      </div>
+      <button class="check-btn" (click)="checkPattern()">Check Pattern</button>
+    </div>
+  </div>
+  <div class="easter-egg-container" *ngIf="showEasterEgg">
+    <iframe src="../assets/pattern.html" class="easter-egg-iframe" title="Pattern Information"></iframe>
+    <button (click)="returnToGame()" class="return-btn">Return to Game</button>
+  </div>
+  <div class="dialog-box" *ngIf="showDialog">
+    <div class="dialog-content">
+      <h2>{{ dialogTitle }}</h2>
+      <p>{{ dialogMessage }}</p>
+      <div *ngIf="correctArrangement.length > 0" class="correct-pattern-row">
+        <div class="shape small" *ngFor="let shapeName of correctArrangement" [ngClass]="shapeName"></div>
+      </div>
+      <button class="close-btn" (click)="closeDialog()">Close</button>
+    </div>
+  </div>
+</body>
+<footer>
+  <p>&copy; 2025 Postescu Razvan-Ioan. All rights reserved.</p>
+</footer>
+</html>
